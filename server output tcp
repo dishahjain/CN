@@ -1,0 +1,12 @@
+$ cc fserver.c
+$ ./a.out
+error:no port no
+usage:
+/server port no
+
+$ cc fclient.c
+$./a.out
+Err:no port no.
+usage:
+./client portno
+ex:./client 7777
