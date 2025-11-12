@@ -1,0 +1,63 @@
+#include&lt;stdio.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;netinet/in.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;netdb.h&gt;
+#include&lt;string.h&gt;
+#include&lt;unistd.h&gt;
+int main(int argc,char *argv[])
+{
+int sockfd,newsockfd,portno,len,n;
+char buffer[256],c[2000],cc[20000];
+struct sockaddr_in serv,cli;
+FILE *fd;
+if(argc&lt;2)
+
+Dept of CSE BMSCE
+
+NETWORKS LABORATORY Page 14
+{
+printf(&quot;error:no port no\n usage:\n/server port no\n&quot;);
+exit(1);
+}
+sockfd=socket(AF_INET,SOCK_STREAM,0);
+portno=atoi(argv[1]);
+serv.sin_family=AF_INET;
+serv.sin_addr.s_addr=INADDR_ANY;
+serv.sin_port=htons(portno);
+bind(sockfd,(struct sockaddr *)&amp;serv,sizeof(serv));
+listen(sockfd,10);
+len=sizeof(cli);
+printf(&quot;server:\nwaiting for connection\n&quot;);
+newsockfd=accept(sockfd,(struct sockaddr *)&amp;cli,&amp;len);
+bzero(buffer,255);
+n=read(newsockfd,buffer,255);
+printf(&quot;\nserver recveived:%s\n&quot;,buffer);
+if((fd=fopen(buffer,&quot;r&quot;))!=NULL)
+{
+printf(&quot;server:%s found\n opening and reading..\n&quot;,buffer);
+printf(&quot;reading..\n..reading complete&quot;);
+fgets(cc,2000,fd);
+while(!feof(fd))
+{
+fgets(c,2000,fd);
+strcat(cc,c);
+}
+n=write(newsockfd,cc,strlen(cc));
+if(n&lt;0)
+printf(&quot;error writing to socket&quot;);
+printf(&quot;\ntransfer complete\n&quot;);
+}
+else
+{
+printf(&quot;server:file not found\n&quot;);
+n=write(newsockfd,&quot;file not foung&quot;,15);
+if(n&lt;0)
+printf(&quot;error: writing to socket..\n&quot;);
+
+Dept of CSE BMSCE
+
+NETWORKS LABORATORY Page 15
+}
+return 0;
+}
